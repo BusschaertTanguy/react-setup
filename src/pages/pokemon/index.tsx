@@ -1,32 +1,8 @@
-import {useEffect, useState} from "react";
-import {Pokemon} from "./models/pokemon.ts";
-import {getPokemon} from "./http/get-pokemon.ts";
 import {PokemonDetail} from "./components/pokemon-detail.tsx";
+import usePokemon from "./hooks/usePokemon.ts";
 
 const Index = () => {
-    const [id, setId] = useState<number>(1);
-    const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        getPokemon(id)
-            .then(pokemon => setPokemon(pokemon))
-            .catch((error: string) => setError(error));
-    }, [id]);
-
-    const previous = () => {
-        setId(prev => {
-            if (prev <= 1) {
-                return prev;
-            }
-
-            return prev - 1;
-        })
-    }
-
-    const next = () => {
-        setId(prev => prev + 1);
-    }
+    const {pokemon, error, previous, next} = usePokemon();
 
     if (error) {
         return <div>{error}</div>;
@@ -46,7 +22,7 @@ const Index = () => {
             justifyContent: "center",
             alignItems: "center"
         }}>
-            <button onClick={previous} disabled={id <= 1}>Previous</button>
+            <button onClick={previous} disabled={pokemon.id <= 1}>Previous</button>
             <PokemonDetail pokemon={pokemon}/>
             <button onClick={next}>Next</button>
         </div>
